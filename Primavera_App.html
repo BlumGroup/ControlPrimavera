@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Primavera — Control Financiero</title>
+<style>
+:root{
+  --navy:#0F2344;--teal:#1A7F6F;--gold:#C8A951;--cream:#F7F4EE;
+  --white:#fff;--lgray:#F0EEE9;--mgray:#D8D4CC;--dgray:#6B6860;
+  --green:#1A6B4A;--ltgreen:#DCFCE7;--red:#C0392B;--ltred:#FEE2E2;
+  --amber:#92400E;--ltamber:#FEF3C7;--blue:#1B3A6B;--ltblue:#DBEAFE;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8f7f4;color:var(--navy);min-height:100vh}
+
+/* TOP BAR */
+.topbar{background:var(--navy);height:54px;display:flex;align-items:center;
+  justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-dot{width:28px;height:28px;background:var(--gold);border-radius:7px;
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--navy);font-size:13px}
+.brand-name{font-size:14px;font-weight:700;color:#fff}
+.brand-sub{font-size:11px;color:rgba(255,255,255,.45)}
+.user-select{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  border-radius:20px;padding:5px 14px;font-size:12px;color:#fff;cursor:pointer;
+  display:flex;align-items:center;gap:8px}
+.user-select select{background:none;border:none;color:#fff;font-size:12px;cursor:pointer;outline:none}
+.user-select select option{color:var(--navy);background:#fff}
+
+/* SECTION TABS */
+.tabs{background:#fff;border-bottom:1px solid var(--mgray);display:flex;gap:0}
+.tab{flex:1;padding:14px;font-size:13px;font-weight:600;color:var(--dgray);
+  cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;
+  transition:.2s;text-align:center}
+.tab:hover{color:var(--navy)}
+.tab.on{color:var(--teal);border-bottom-color:var(--teal)}
+
+/* MAIN */
+main{max-width:960px;margin:0 auto;padding:1.5rem}
+.section{display:none}
+.section.on{display:block}
+
+/* CARDS */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.card{background:#fff;border:1px solid var(--mgray);border-radius:12px;padding:16px}
+.card-label{font-size:10px;font-weight:600;color:var(--dgray);text-transform:uppercase;
+  letter-spacing:.05em;margin-bottom:4px}
+.card-val{font-size:22px;font-weight:800;color:var(--navy);line-height:1}
+.card-val.teal{color:var(--teal)}
+.card-val.gold{color:#92400E}
+.card-sub{font-size:11px;color:var(--dgray);margin-top:4px}
+
+/* FORM */
+.form-card{background:#fff;border:1px solid var(--mgray);border-radius:14px;padding:24px}
+.form-title{font-size:16px;font-weight:700;margin-bottom:20px;color:var(--navy)}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--mgray);border-radius:8px;
+  font-size:13px;color:var(--navy);outline:none;font-family:inherit;background:#fff;
+  transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal)}
+.field textarea{min-height:72px;resize:vertical}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:580px){.field-row{grid-template-columns:1fr}}
+
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--mgray);border-radius:10px;padding:20px;
+  text-align:center;cursor:pointer;transition:.2s;background:#fafafa}
+.upload-zone:hover{border-color:var(--teal);background:#f0faf8}
+.upload-zone.has-file{border-color:var(--teal);background:var(--ltgreen)}
+.upload-zone input{display:none}
+.upload-zone p{font-size:12px;color:var(--dgray);margin-top:6px}
+.upload-icon{font-size:28px;color:var(--mgray)}
+.has-file .upload-icon{color:var(--teal)}
+
+/* TIPO PILLS */
+.tipo-grid{display:flex;flex-wrap:wrap;gap:8px}
+.tipo-pill{border:1px solid var(--mgray);border-radius:8px;padding:7px 14px;
+  font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:var(--dgray);
+  transition:.2s}
+.tipo-pill:hover{border-color:var(--teal);color:var(--teal)}
+.tipo-pill.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:8px;
+  font-size:13px;font-weight:700;cursor:pointer;border:none;transition:.2s}
+.btn-primary{background:var(--teal);color:#fff}
+.btn-primary:hover{background:#15705F}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-ghost{background:var(--lgray);color:var(--navy)}
+
+/* ALERT */
+.alert{border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:16px;line-height:1.5}
+.alert-green{background:var(--ltgreen);color:var(--green);border:1px solid rgba(22,163,74,.2)}
+.alert-red{background:var(--ltred);color:var(--red);border:1px solid rgba(220,38,38,.2)}
+.alert-amber{background:var(--ltamber);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+.alert-blue{background:var(--ltblue);color:var(--blue);border:1px solid rgba(59,130,246,.2)}
+
+/* STATUS SECTION */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.filter-bar select{padding:8px 12px;border:1px solid var(--mgray);border-radius:8px;
+  font-size:13px;color:var(--navy);background:#fff;cursor:pointer;outline:none}
+.filter-bar .badge-count{font-size:12px;color:var(--dgray)}
+
+/* PARTICIPANTES GRID */
+.part-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.part-card{background:#fff;border:1px solid var(--mgray);border-radius:12px;padding:16px;text-align:center}
+.part-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:15px;color:#fff;margin:0 auto 8px}
+.part-name{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:2px}
+.part-rol{font-size:10px;color:var(--dgray);margin-bottom:10px}
+.part-pct{font-size:24px;font-weight:800;color:var(--teal)}
+.part-aport{font-size:11px;color:var(--dgray);margin-top:4px}
+.part-adel{font-size:10px;font-weight:600;color:var(--teal);margin-top:4px}
+
+/* PROGRESS */
+.prog-track{height:6px;background:var(--lgray);border-radius:3px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;background:var(--teal);border-radius:3px;transition:width .5s}
+
+/* TABLE */
+.tbl-wrap{background:#fff;border:1px solid var(--mgray);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.tbl-wrap.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{background:var(--navy);color:#fff;padding:10px 12px;text-align:left;
+  font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+tbody tr:nth-child(even){background:#fafafa}
+tbody tr:hover{background:#f0faf8}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--lgray);color:var(--navy)}
+tbody tr:last-child td{border:none}
+.td-c{text-align:center}
+.td-r{text-align:right}
+
+/* BADGES */
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:3px 8px;border-radius:12px}
+.b-green{background:var(--ltgreen);color:var(--green)}
+.b-amber{background:var(--ltamber);color:var(--amber)}
+.b-red{background:var(--ltred);color:var(--red)}
+.b-blue{background:var(--ltblue);color:var(--blue)}
+.b-gray{background:var(--lgray);color:var(--dgray)}
+
+/* CRONOGRAMA */
+.cron-row{display:grid;grid-template-columns:80px 1fr 1fr 90px;gap:8px;
+  align-items:center;padding:10px 0;border-bottom:1px solid var(--lgray)}
+.cron-row:last-child{border:none}
+.cron-mes{font-size:12px;font-weight:700;color:var(--navy)}
+.cron-bar-wrap{display:flex;flex-direction:column;gap:2px}
+.cron-label{font-size:10px;color:var(--dgray)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--navy);color:#fff;padding:12px 24px;border-radius:10px;
+  font-size:13px;font-weight:600;z-index:999;transition:transform .3s;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.ok{background:var(--teal)}
+.toast.err{background:var(--red)}
+
+/* Spinner */
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Section headings */
+.sec-hdr{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px;
+  display:flex;align-items:center;justify-content:space-between}
+.sec-hdr span{font-size:11px;font-weight:400;color:var(--dgray)}
+.divider{height:1px;background:var(--mgray);margin:20px 0}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-dot">P</div>
+    <div>
+      <div class="brand-name">Proyecto Primavera</div>
+      <div class="brand-sub">Río Alto · Buenavista · Barranquilla</div>
+    </div>
+  </div>
+  <div class="user-select">
+    <span style="color:rgba(255,255,255,.5);font-size:11px">Yo soy:</span>
+    <select id="currentUser" onchange="onUserChange()">
+      <option value="">— Seleccionar —</option>
+      <option>Mabel Hermida</option>
+      <option>Carlos Arboleda</option>
+      <option>Camilo Hermida</option>
+      <option>Mauricio Iriarte</option>
+      <option>Mauro Hermida</option>
+    </select>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab on" onclick="switchTab('registrar',this)">+ Registrar pago</button>
+  <button class="tab" onclick="switchTab('status',this)">Ver status</button>
+</div>
+
+<!-- ═══ REGISTRAR ═══ -->
+<main>
+<div class="section on" id="sec-registrar">
+
+  <div id="noUserAlert" class="alert alert-amber">
+    Selecciona tu nombre en la parte superior para registrar un pago.
+  </div>
+
+  <div id="registerForm" style="display:none">
+    <div class="form-card">
+      <div class="form-title" id="formTitle">Registrar pago</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Mes que estás pagando</label>
+          <select id="f-mes"></select>
+        </div>
+        <div class="field">
+          <label>Apto</label>
+          <select id="f-apto">
+            <option value="Ambos">Ambos ($994.034)</option>
+            <option value="Apto 1">Solo Apto 1 — Torre 8 ($486.461)</option>
+            <option value="Apto 2">Solo Apto 2 — Torre 1 ($508.573)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Tipo de aporte</label>
+        <div class="tipo-grid" id="tipoGrid">
+          <button class="tipo-pill on" data-tipo="Cuota propia" onclick="setTipo(this)">Cuota propia</button>
+          <button class="tipo-pill" data-tipo="Prima / bono" onclick="setTipo(this)">Prima / bono</button>
+          <button class="tipo-pill" data-tipo="Cesantías" onclick="setTipo(this)">Cesantías</button>
+          <button class="tipo-pill" data-tipo="Cobertura total" onclick="setTipo(this)">Cobertura total</button>
+          <button class="tipo-pill" data-tipo="Cobertura parcial" onclick="setTipo(this)">Cobertura parcial</button>
+          <button class="tipo-pill" data-tipo="Doble cuota" onclick="setTipo(this)">Doble cuota</button>
+          <button class="tipo-pill" data-tipo="Separación" onclick="setTipo(this)">Separación</button>
+        </div>
+      </div>
+
+      <div class="field" id="cubreAField" style="display:none">
+        <label>¿A quién estás cubriendo?</label>
+        <select id="f-cubre-a">
+          <option>Mabel Hermida</option>
+          <option>Carlos Arboleda</option>
+          <option>Camilo Hermida</option>
+          <option>Mauricio Iriarte</option>
+          <option>Mauro Hermida</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Monto transferido ($)</label>
+        <input type="number" id="f-monto" placeholder="994034" min="0">
+      </div>
+
+      <div class="field">
+        <label>Comprobantes de transferencia <span style="color:var(--red)">*</span> <span style="font-weight:400;color:var(--dgray)">(hasta 3 archivos)</span></label>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('f-file').click()">
+          <div class="upload-icon" id="uploadIcon">↑</div>
+          <div style="font-size:13px;font-weight:600;color:var(--navy)" id="uploadLabel">Toca para subir comprobantes</div>
+          <p>Captura de pantalla, imagen o PDF · Máx. 3 archivos</p>
+          <input type="file" id="f-file" accept="image/*,.pdf" multiple onchange="onFile(this)">
+        </div>
+        <div id="fileList" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px"></div>
+      </div>
+
+      <div class="field">
+        <label>Observaciones (opcional)</label>
+        <textarea id="f-obs" placeholder="Ej: Este mes incluye adelanto de agosto..."></textarea>
+      </div>
+
+      <div id="submitAlert"></div>
+
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" id="btnSubmit" onclick="submitPago()">
+          Enviar registro
+        </button>
+        <button class="btn btn-ghost" onclick="limpiarForm()">Limpiar</button>
+      </div>
+    </div>
+
+    <!-- Mi estado rápido -->
+    <div class="divider"></div>
+    <div class="sec-hdr">Mi estado actual</div>
+    <div class="cards" id="myCards">
+      <div class="card"><div class="card-label">Mi participación</div><div class="card-val teal" id="myPct">—</div></div>
+      <div class="card"><div class="card-label">Total aportado</div><div class="card-val" id="myTotal">—</div></div>
+      <div class="card"><div class="card-label">Próxima cuota</div><div class="card-val gold" id="myProxima">$994.034</div><div class="card-sub">Vence día 28</div></div>
+      <div class="card"><div class="card-label">Cuotas adelantadas</div><div class="card-val teal" id="myAdel">0</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STATUS ═══ -->
+<div class="section" id="sec-status">
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <select id="filtroPartic" onchange="renderStatus()">
+      <option value="TODOS">Todos los participantes</option>
+      <option>Mabel Hermida</option>
+      <option>Carlos Arboleda</option>
+      <option>Camilo Hermida</option>
+      <option>Mauricio Iriarte</option>
+      <option>Mauro Hermida</option>
+    </select>
+    <button class="btn btn-ghost" style="padding:8px 14px;font-size:12px" onclick="loadData()">↻ Actualizar</button>
+    <span class="badge-count" id="contadorPagos"></span>
+  </div>
+
+  <!-- KPIs globales -->
+  <div class="cards" id="globalCards">
+    <div class="card"><div class="card-label">Total invertido grupo</div><div class="card-val teal" id="kpiTotal">—</div></div>
+    <div class="card"><div class="card-label">Pagos registrados</div><div class="card-val" id="kpiPagos">—</div></div>
+    <div class="card"><div class="card-label">Pendientes validación</div><div class="card-val gold" id="kpiPend">—</div></div>
+    <div class="card"><div class="card-label">Próxima cuota grupo</div><div class="card-val" style="font-size:14px">$4.970.170</div><div class="card-sub">Día 28 · ambos aptos</div></div>
+  </div>
+
+  <!-- Participaciones -->
+  <div class="sec-hdr" id="partTitle">Participaciones actuales <span>% sobre total aportado</span></div>
+  <div class="part-grid" id="partGrid"></div>
+
+  <!-- Cronograma -->
+  <div class="sec-hdr">Cronograma de cuotas <span>Jul 2026 – Nov 2028</span></div>
+  <div class="tbl-wrap scroll" id="cronWrap">
+    <table>
+      <thead><tr>
+        <th>Mes</th><th>Cuota A1 total</th><th>Cuota A2 total</th>
+        <th>Pagado mes</th><th>Faltante</th><th>Estado</th>
+      </tr></thead>
+      <tbody id="cronTbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Tabla de pagos -->
+  <div class="sec-hdr" id="pagosTitle">Registro de pagos</div>
+  <div class="tbl-wrap scroll">
+    <table>
+      <thead><tr>
+        <th>ID</th><th>Fecha</th><th>Participante</th><th>Apto</th>
+        <th>Mes</th><th>Tipo</th><th>Monto</th><th>Estado</th><th>Comprobante</th>
+      </tr></thead>
+      <tbody id="pagosTbody"></tbody>
+    </table>
+  </div>
+
+</div>
+</main>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────
+// IMPORTANTE: reemplaza esta URL con la de tu Apps Script desplegado
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxiiAJq7fxlEgXJkNIhsm4b11-lToIwCe-aa4xUJ_iMFI8_PBlCI1ZXOnQOxszqBPyI/exec";
+
+const PARTIC = [
+  {n:"Mabel Hermida",   i:"MB", c:"#7A4F00", rol:"Co-inversionista"},
+  {n:"Carlos Arboleda", i:"CA", c:"#1B3A6B", rol:"Co-inversionista"},
+  {n:"Camilo Hermida",  i:"CH", c:"#5B2D8E", rol:"Co-inversionista"},
+  {n:"Mauricio Iriarte",i:"MI", c:"#1A7F6F", rol:"Titular Apto 2"},
+  {n:"Mauro Hermida",   i:"MH", c:"#0F2344", rol:"Titular Apto 1"},
+];
+
+const MESES = ["Jul 2026","Ago 2026","Sep 2026","Oct 2026","Nov 2026","Dic 2026",
+  "Ene 2027","Feb 2027","Mar 2027","Abr 2027","May 2027","Jun 2027",
+  "Jul 2027","Ago 2027","Sep 2027","Oct 2027","Nov 2027","Dic 2027",
+  "Ene 2028","Feb 2028","Mar 2028","Abr 2028","May 2028","Jun 2028",
+  "Jul 2028","Ago 2028","Sep 2028","Oct 2028","Nov 2028"];
+
+let currentUser = "";
+let tipoActual = "Cuota propia";
+let fileData = []; // array up to 3 files
+let cachedData = null;
+
+// ── INIT ──────────────────────────────────────────────────────────
+window.onload = () => {
+  const mesSelect = document.getElementById('f-mes');
+  MESES.forEach(m => {
+    const o = document.createElement('option');
+    o.textContent = m; mesSelect.appendChild(o);
+  });
+  loadData();
+};
+
+function onUserChange() {
+  currentUser = document.getElementById('currentUser').value;
+  document.getElementById('noUserAlert').style.display = currentUser ? 'none' : '';
+  document.getElementById('registerForm').style.display = currentUser ? 'block' : 'none';
+  if (currentUser) {
+    document.getElementById('formTitle').textContent = `Registrar pago — ${currentUser}`;
+    updateMyCards();
+  }
+}
+
+// ── TABS ──────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('sec-' + id).classList.add('on');
+  btn.classList.add('on');
+  if (id === 'status') renderStatus();
+}
+
+// ── DATA ──────────────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const r = await fetch(SCRIPT_URL + "?v=" + Date.now());
+    cachedData = await r.json();
+    renderStatus();
+    updateMyCards();
+  } catch(e) {
+    toast("Error cargando datos. Verifica la URL del script.", "err");
+  }
+}
+
+// ── RENDER STATUS ─────────────────────────────────────────────────
+function renderStatus() {
+  if (!cachedData || !cachedData.ok) return;
+  const { pagos, participaciones, totales, cronograma } = cachedData;
+  const filtro = document.getElementById('filtroPartic').value;
+
+  // KPIs
+  document.getElementById('kpiTotal').textContent = cop(totales.total_pagado);
+  document.getElementById('kpiPagos').textContent = totales.num_pagos;
+  document.getElementById('kpiPend').textContent = totales.pendientes;
+  document.getElementById('contadorPagos').textContent = `${pagos.length} registro(s)`;
+
+  // Participaciones grid
+  const pg = document.getElementById('partGrid');
+  pg.innerHTML = '';
+  const showParts = filtro === 'TODOS' ? PARTIC : PARTIC.filter(p => p.n === filtro);
+  showParts.forEach(p => {
+    const datos = participaciones[p.n] || {pct:0.20,total:0,cuotas_adelantadas:0};
+    pg.innerHTML += `<div class="part-card">
+      <div class="part-avatar" style="background:${p.c}">${p.i}</div>
+      <div class="part-name">${p.n.split(' ')[0]}</div>
+      <div class="part-rol">${p.rol}</div>
+      <div class="part-pct">${(datos.pct*100).toFixed(1)}%</div>
+      <div class="part-aport">${cop(datos.total)} aportado</div>
+      ${datos.cuotas_adelantadas>0?`<div class="part-adel">+${datos.cuotas_adelantadas} cuotas adelantadas</div>`:''}
+      <div class="prog-track"><div class="prog-fill" style="width:${(datos.pct*100).toFixed(1)}%"></div></div>
+    </div>`;
+  });
+  document.getElementById('partTitle').innerHTML = filtro==='TODOS'
+    ? 'Participaciones actuales <span>% sobre total aportado</span>'
+    : `Participación — ${filtro} <span>% sobre total</span>`;
+
+  // Cronograma
+  const ctbody = document.getElementById('cronTbody');
+  ctbody.innerHTML = '';
+  cronograma.forEach(m => {
+    const faltante = Math.max(0, (m.cuota_a1 + (m.tiene_a2 ? m.cuota_a2 : 0)) - m.pagado);
+    const completo = faltante === 0 && m.pagado > 0;
+    const parcial = m.pagado > 0 && !completo;
+    ctbody.innerHTML += `<tr>
+      <td style="font-weight:600">${m.mes}</td>
+      <td class="td-r">${m.cuota_a1 > 0 ? cop(m.cuota_a1) : '—'}</td>
+      <td class="td-r">${m.tiene_a2 ? cop(m.cuota_a2) : '<span style="color:#aaa">Solo A1</span>'}</td>
+      <td class="td-r" style="color:var(--teal);font-weight:600">${m.pagado > 0 ? cop(m.pagado) : '—'}</td>
+      <td class="td-r" style="color:var(--red)">${faltante > 0 ? cop(faltante) : '—'}</td>
+      <td class="td-c">${completo ? '<span class="badge b-green">Completo ✓</span>' : parcial ? '<span class="badge b-amber">Parcial</span>' : '<span class="badge b-gray">Pendiente</span>'}</td>
+    </tr>`;
+  });
+
+  // Tabla pagos
+  const ptbody = document.getElementById('pagosTbody');
+  const pagosFiltrados = filtro === 'TODOS' ? pagos : pagos.filter(p => p['Participante'] === filtro);
+  document.getElementById('pagosTitle').textContent = filtro === 'TODOS'
+    ? `Registro de pagos (${pagosFiltrados.length})`
+    : `Pagos de ${filtro} (${pagosFiltrados.length})`;
+
+  if (pagosFiltrados.length === 0) {
+    ptbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--dgray);padding:24px">Sin pagos registrados.</td></tr>';
+    return;
+  }
+  ptbody.innerHTML = [...pagosFiltrados].reverse().map(p => {
+    const nombre = p['Participante'] || '';
+    const pc = PARTIC.find(x => x.n === nombre);
+    const estado = p['Estado'] || 'Pendiente';
+    const badgeClass = estado === 'Validado' ? 'b-green' : estado === 'Rechazado' ? 'b-red' : 'b-amber';
+    const comp = p['Comprobante'] && p['Comprobante'] !== 'Sin comprobante'
+      ? `<a href="${p['Comprobante']}" target="_blank" style="color:var(--teal);font-size:11px">Ver ↗</a>`
+      : '<span style="color:var(--dgray)">—</span>';
+    return `<tr>
+      <td style="font-size:11px;color:var(--dgray)">${p['ID Pago']||''}</td>
+      <td style="white-space:nowrap">${p['Fecha pago']||''}</td>
+      <td><div style="display:flex;align-items:center;gap:6px">
+        ${pc ? `<div style="width:22px;height:22px;border-radius:50%;background:${pc.c};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff">${pc.i}</div>` : ''}
+        <span>${nombre.split(' ')[0]}</span>
+      </div></td>
+      <td class="td-c"><span class="badge b-blue">${p['Apto']||''}</span></td>
+      <td style="white-space:nowrap">${p['Mes cuota']||''}</td>
+      <td style="font-size:11px">${p['Tipo aporte']||''}</td>
+      <td class="td-r" style="font-weight:700">${cop(Number(p['Monto ($)'])||0)}</td>
+      <td class="td-c"><span class="badge ${badgeClass}">${estado}</span></td>
+      <td class="td-c">${comp}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── MY CARDS ──────────────────────────────────────────────────────
+function updateMyCards() {
+  if (!cachedData || !cachedData.ok || !currentUser) return;
+  const datos = cachedData.participaciones[currentUser] || {pct:0.20,total:0,cuotas_adelantadas:0};
+  document.getElementById('myPct').textContent = (datos.pct*100).toFixed(1) + '%';
+  document.getElementById('myTotal').textContent = cop(datos.total);
+  document.getElementById('myAdel').textContent = datos.cuotas_adelantadas;
+}
+
+// ── FORM ──────────────────────────────────────────────────────────
+function setTipo(btn) {
+  document.querySelectorAll('.tipo-pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  tipoActual = btn.dataset.tipo;
+  const esCob = tipoActual.includes('Cobertura');
+  document.getElementById('cubreAField').style.display = esCob ? 'block' : 'none';
+}
+
+function onFile(input) {
+  const files = Array.from(input.files).slice(0,3);
+  if (!files.length) return;
+  fileData = [];
+  const list = document.getElementById('fileList');
+  list.innerHTML = '';
+  let loaded = 0;
+  files.forEach((file,i) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      fileData.push({ base64: e.target.result.split(',')[1], nombre: file.name, tipo: file.type });
+      loaded++;
+      list.innerHTML = fileData.map((f,j) =>
+        `<div style="background:var(--ltgreen);color:var(--green);border:1px solid rgba(22,163,74,.2);
+          border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600">✓ ${f.nombre}</div>`
+      ).join('');
+      if (loaded === files.length) {
+        document.getElementById('uploadZone').classList.add('has-file');
+        document.getElementById('uploadLabel').textContent = `✓ ${loaded} archivo(s) listos`;
+        document.getElementById('uploadIcon').textContent = '✓';
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function submitPago() {
+  const monto = Number(document.getElementById('f-monto').value);
+  const mes = document.getElementById('f-mes').value;
+
+  if (!currentUser) { toast("Selecciona tu nombre primero.", "err"); return; }
+  if (!monto || monto <= 0) { toast("Ingresa un monto válido.", "err"); return; }
+  if (!fileData || fileData.length === 0) { toast("Adjunta al menos un comprobante.", "err"); return; }
+
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div> Enviando...';
+
+  const body = {
+    participante: currentUser,
+    apto: document.getElementById('f-apto').value,
+    mes_cuota: mes,
+    tipo_aporte: tipoActual,
+    monto: monto,
+    cubre_a: document.getElementById('f-cubre-a')?.value || 'N/A',
+    observaciones: document.getElementById('f-obs').value,
+    comprobantes: fileData,
+  };
+
+  try {
+    const r = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    const res = await r.json();
+    if (res.ok) {
+      toast(`✓ Pago registrado — ${res.id}`, "ok");
+      limpiarForm();
+      await loadData();
+    } else {
+      toast("Error: " + res.error, "err");
+    }
+  } catch(e) {
+    toast("Error de conexión. Intenta de nuevo.", "err");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Enviar registro';
+  }
+}
+
+function limpiarForm() {
+  document.getElementById('f-monto').value = '';
+  document.getElementById('f-obs').value = '';
+  document.getElementById('f-file').value = '';
+  document.getElementById('uploadZone').classList.remove('has-file');
+  document.getElementById('uploadLabel').textContent = 'Toca para subir el comprobante';
+  document.getElementById('uploadIcon').textContent = '↑';
+  fileData = [];
+  document.querySelectorAll('.tipo-pill').forEach(b => b.classList.remove('on'));
+  document.querySelector('[data-tipo="Cuota propia"]').classList.add('on');
+  tipoActual = 'Cuota propia';
+  document.getElementById('cubreAField').style.display = 'none';
+  document.getElementById('submitAlert').innerHTML = '';
+  document.getElementById('fileList').innerHTML = '';
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────
+function cop(n) { return '$' + Math.round(n).toLocaleString('es-CO'); }
+
+let toastTimer;
+function toast(msg, type='ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>
