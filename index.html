@@ -447,16 +447,26 @@ window.onload = () => {
 };
 
 function poblarMeses() {
-  const sel   = document.getElementById('f-mes');
-  const start = new Date(2026, 6, 1);
-  for (let n = 0; n < 23; n++) {
-    const d = new Date(start.getFullYear(), start.getMonth() + n, 1);
-    const lbl = d.toLocaleDateString("es-CO", {month:"short", year:"numeric"});
+  // Hardcoded para evitar diferencias de locale entre sistemas operativos
+  // Formato debe coincidir exactamente con lo que devuelve Apps Script: 'ago. 2026'
+  const MESES_LABELS = [
+    'jul. 2026','ago. 2026','sep. 2026','oct. 2026','nov. 2026','dic. 2026',
+    'ene. 2027','feb. 2027','mar. 2027','abr. 2027','may. 2027','jun. 2027',
+    'jul. 2027','ago. 2027','sep. 2027','oct. 2027','nov. 2027','dic. 2027',
+    'ene. 2028','feb. 2028','mar. 2028','abr. 2028','may. 2028','jun. 2028',
+    'jul. 2028','ago. 2028','sep. 2028','oct. 2028','nov. 2028'
+  ];
+  const sel = document.getElementById('f-mes');
+  MESES_LABELS.forEach(lbl => {
     sel.innerHTML += `<option value="${lbl}">${lbl}</option>`;
-  }
+  });
   // Seleccionar mes actual
   const hoy = new Date();
-  const actual = hoy.toLocaleDateString("es-CO",{month:"short",year:"numeric"});
+  const m = hoy.getMonth();
+  const y = hoy.getFullYear();
+  const ES = ['ene.','feb.','mar.','abr.','may.','jun.',
+               'jul.','ago.','sep.','oct.','nov.','dic.'];
+  const actual = ES[m] + ' ' + y;
   [...sel.options].forEach(o => { if(o.value === actual) o.selected=true; });
 }
 
