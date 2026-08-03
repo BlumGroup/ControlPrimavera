@@ -237,6 +237,7 @@ tbody tr:last-child td{border:none}
 
     <div class="form-card">
       <div class="form-title" id="formTitle">Registrar pago</div>
+      <div id="titularAlert" class="alert alert-amber" style="display:none"></div>
 
       <!-- PASO 1: Elegir apto -->
       <div class="field">
@@ -606,6 +607,7 @@ async function onUserChange() {
   if (!currentUser) return;
 
   document.getElementById('formTitle').textContent = `Registrar pago — ${currentUser}`;
+  verificarTitular();
   await cargarCronPersonal();
   updateMontoAutocomplete();
   updateMyCards();
@@ -690,7 +692,22 @@ function selApto(a) {
   document.getElementById('apto-a1').classList.toggle('on', a==='a1');
   document.getElementById('apto-a2').classList.toggle('on', a==='a2');
   mostrarCuenta(a);
+  verificarTitular();
   updateMontoAutocomplete();
+}
+
+function verificarTitular() {
+  if (!currentUser) return;
+  const esTitularA1 = currentUser === "Mauro Hermida" && aptoSel === "a1";
+  const esTitularA2 = currentUser === "Mauricio Iriarte" && aptoSel === "a2";
+  const alertDiv = document.getElementById('titularAlert');
+  if (!alertDiv) return;
+  if (esTitularA1 || esTitularA2) {
+    alertDiv.style.display = 'block';
+    alertDiv.innerHTML = '⚠️ Eres el titular de este apto. No te transfiere a ti mismo — adjunta el <strong>comprobante del pago a Prodesa</strong> como soporte de tu cuota.';
+  } else {
+    alertDiv.style.display = 'none';
+  }
 }
 
 function mostrarCuenta(a) {
@@ -841,6 +858,7 @@ async function submitPago() {
       body: JSON.stringify({
         participante:  currentUser,
         apto:          aptoNombre,
+        apto_key:      aptoSel,          // 'a1' o 'a2' para mapeo en Apps Script
         mes_cuota:     mes,
         tipo_aporte:   tipoActual,
         monto:         monto,
