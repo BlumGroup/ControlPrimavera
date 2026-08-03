@@ -237,6 +237,7 @@ tbody tr:last-child td{border:none}
 
     <div class="form-card">
       <div class="form-title" id="formTitle">Registrar pago</div>
+      <div id="titularAlert" class="alert alert-amber" style="display:none"></div>
 
       <!-- PASO 1: Elegir apto -->
       <div class="field">
@@ -403,6 +404,134 @@ tbody tr:last-child td{border:none}
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxiiAJq7fxlEgXJkNIhsm4b11-lToIwCe-aa4xUJ_iMFI8_PBlCI1ZXOnQOxszqBPyI/exec";
 
 // Montos personalizados leídos del Excel (se actualizan desde el Sheets al cargar)
+const CRONOGRAMA_LOCAL = {
+  "Mabel Hermida": {
+    "jul. 2026": {a1:0, a2:0},
+    "ago. 2026": {a1:650000, a2:424281},
+    "sep. 2026": {a1:650000, a2:424281},
+    "oct. 2026": {a1:650000, a2:424281},
+    "nov. 2026": {a1:650000, a2:424281},
+    "dic. 2026": {a1:0, a2:424281},
+    "ene. 2027": {a1:650000, a2:424281},
+    "feb. 2027": {a1:650000, a2:424281},
+    "mar. 2027": {a1:650000, a2:424281},
+    "abr. 2027": {a1:650000, a2:424281},
+    "may. 2027": {a1:650000, a2:424281},
+    "jun. 2027": {a1:0, a2:424281},
+    "jul. 2027": {a1:650000, a2:424281},
+    "ago. 2027": {a1:650000, a2:424281},
+    "sep. 2027": {a1:650000, a2:424281},
+    "oct. 2027": {a1:650000, a2:424281},
+    "nov. 2027": {a1:650000, a2:424281},
+    "dic. 2027": {a1:0, a2:424281},
+    "ene. 2028": {a1:650000, a2:424281},
+    "feb. 2028": {a1:650000, a2:424281},
+    "mar. 2028": {a1:650000, a2:424281},
+    "abr. 2028": {a1:138606, a2:2702986},
+    "may. 2028": {a1:0, a2:0},
+  },
+  "Carlos Arboleda": {
+    "jul. 2026": {a1:0, a2:0},
+    "ago. 2026": {a1:0, a2:650000},
+    "sep. 2026": {a1:0, a2:650000},
+    "oct. 2026": {a1:0, a2:650000},
+    "nov. 2026": {a1:0, a2:650000},
+    "dic. 2026": {a1:2070204, a2:0},
+    "ene. 2027": {a1:0, a2:650000},
+    "feb. 2027": {a1:650000, a2:650000},
+    "mar. 2027": {a1:0, a2:650000},
+    "abr. 2027": {a1:0, a2:650000},
+    "may. 2027": {a1:0, a2:650000},
+    "jun. 2027": {a1:2070204, a2:0},
+    "jul. 2027": {a1:0, a2:650000},
+    "ago. 2027": {a1:0, a2:650000},
+    "sep. 2027": {a1:511394, a2:650000},
+    "oct. 2027": {a1:0, a2:650000},
+    "nov. 2027": {a1:0, a2:650000},
+    "dic. 2027": {a1:2070204, a2:0},
+    "ene. 2028": {a1:0, a2:650000},
+    "feb. 2028": {a1:0, a2:650000},
+    "mar. 2028": {a1:0, a2:650000},
+    "abr. 2028": {a1:0, a2:138606},
+    "may. 2028": {a1:3816597, a2:0},
+  },
+  "Camilo Hermida": {
+    "jul. 2026": {a1:0, a2:0},
+    "ago. 2026": {a1:486461, a2:508573},
+    "sep. 2026": {a1:486461, a2:508573},
+    "oct. 2026": {a1:486461, a2:508573},
+    "nov. 2026": {a1:486461, a2:508573},
+    "dic. 2026": {a1:486461, a2:508573},
+    "ene. 2027": {a1:486461, a2:508573},
+    "feb. 2027": {a1:486461, a2:508573},
+    "mar. 2027": {a1:486461, a2:508573},
+    "abr. 2027": {a1:486461, a2:508573},
+    "may. 2027": {a1:486461, a2:508573},
+    "jun. 2027": {a1:486461, a2:508573},
+    "jul. 2027": {a1:486461, a2:508573},
+    "ago. 2027": {a1:486461, a2:508573},
+    "sep. 2027": {a1:486461, a2:508573},
+    "oct. 2027": {a1:486461, a2:508573},
+    "nov. 2027": {a1:486461, a2:508573},
+    "dic. 2027": {a1:486461, a2:508573},
+    "ene. 2028": {a1:486461, a2:508573},
+    "feb. 2028": {a1:486461, a2:508573},
+    "mar. 2028": {a1:486461, a2:508573},
+    "abr. 2028": {a1:486461, a2:1017146},
+    "may. 2028": {a1:972922, a2:0},
+  },
+  "Mauricio Iriarte": {
+    "jul. 2026": {a1:0, a2:0},
+    "ago. 2026": {a1:486461, a2:508573},
+    "sep. 2026": {a1:486461, a2:508573},
+    "oct. 2026": {a1:486461, a2:508573},
+    "nov. 2026": {a1:486461, a2:508573},
+    "dic. 2026": {a1:486461, a2:508573},
+    "ene. 2027": {a1:486461, a2:508573},
+    "feb. 2027": {a1:486461, a2:508573},
+    "mar. 2027": {a1:486461, a2:508573},
+    "abr. 2027": {a1:486461, a2:508573},
+    "may. 2027": {a1:486461, a2:508573},
+    "jun. 2027": {a1:486461, a2:508573},
+    "jul. 2027": {a1:486461, a2:508573},
+    "ago. 2027": {a1:486461, a2:508573},
+    "sep. 2027": {a1:486461, a2:508573},
+    "oct. 2027": {a1:486461, a2:508573},
+    "nov. 2027": {a1:486461, a2:508573},
+    "dic. 2027": {a1:486461, a2:508573},
+    "ene. 2028": {a1:486461, a2:508573},
+    "feb. 2028": {a1:486461, a2:508573},
+    "mar. 2028": {a1:486461, a2:508573},
+    "abr. 2028": {a1:486461, a2:1017146},
+    "may. 2028": {a1:972922, a2:0},
+  },
+  "Mauro Hermida": {
+    "jul. 2026": {a1:0, a2:0},
+    "ago. 2026": {a1:486461, a2:508573},
+    "sep. 2026": {a1:486461, a2:508573},
+    "oct. 2026": {a1:486461, a2:508573},
+    "nov. 2026": {a1:486461, a2:508573},
+    "dic. 2026": {a1:486461, a2:508573},
+    "ene. 2027": {a1:486461, a2:508573},
+    "feb. 2027": {a1:486461, a2:508573},
+    "mar. 2027": {a1:486461, a2:508573},
+    "abr. 2027": {a1:486461, a2:508573},
+    "may. 2027": {a1:486461, a2:508573},
+    "jun. 2027": {a1:486461, a2:508573},
+    "jul. 2027": {a1:486461, a2:508573},
+    "ago. 2027": {a1:486461, a2:508573},
+    "sep. 2027": {a1:486461, a2:508573},
+    "oct. 2027": {a1:486461, a2:508573},
+    "nov. 2027": {a1:486461, a2:508573},
+    "dic. 2027": {a1:486461, a2:508573},
+    "ene. 2028": {a1:486461, a2:508573},
+    "feb. 2028": {a1:486461, a2:508573},
+    "mar. 2028": {a1:486461, a2:508573},
+    "abr. 2028": {a1:486461, a2:1017146},
+    "may. 2028": {a1:972922, a2:0},
+  },
+};
+
 const PARTIC_INFO = [
   {n:"Mabel Hermida",   i:"MB", c:"#7A4F00"},
   {n:"Carlos Arboleda", i:"CA", c:"#1B3A6B"},
@@ -478,21 +607,36 @@ async function onUserChange() {
   if (!currentUser) return;
 
   document.getElementById('formTitle').textContent = `Registrar pago — ${currentUser}`;
+  verificarTitular();
   await cargarCronPersonal();
   updateMontoAutocomplete();
   updateMyCards();
 }
 
 async function cargarCronPersonal() {
+  // Primero carga local para respuesta inmediata
+  const cronLocal = CRONOGRAMA_LOCAL[currentUser] || {};
+  cronPersonal = Object.entries(cronLocal).map(([mes, v]) => ({
+    mes, cuota_a1: v.a1, cuota_a2: v.a2,
+    tiene_a2: v.a2 > 0,
+    estado_a1: 'Pendiente', estado_a2: 'Pendiente',
+    total: v.a1 + v.a2
+  }));
+  actualizarLabelsMontos();
+  mostrarPendientes();
+
+  // Luego intenta actualizar desde el Sheets en segundo plano
   try {
-    const url = `${SCRIPT_URL}?accion=cronograma&nombre=${encodeURIComponent(currentUser)}&v=${Date.now()}`;
+    const url = SCRIPT_URL + "?accion=cronograma&nombre=" + encodeURIComponent(currentUser) + "&v=" + Date.now();
     const r   = await fetch(url);
     const d   = await r.json();
-    cronPersonal = d.ok ? d.cronograma : [];
-    actualizarLabelsMontos();
-    mostrarPendientes();
+    if (d.ok && d.cronograma && d.cronograma.length > 0) {
+      cronPersonal = d.cronograma;
+      actualizarLabelsMontos();
+      mostrarPendientes();
+    }
   } catch(e) {
-    cronPersonal = [];
+    // Si falla el Sheets, sigue con los datos locales
   }
 }
 
@@ -548,7 +692,22 @@ function selApto(a) {
   document.getElementById('apto-a1').classList.toggle('on', a==='a1');
   document.getElementById('apto-a2').classList.toggle('on', a==='a2');
   mostrarCuenta(a);
+  verificarTitular();
   updateMontoAutocomplete();
+}
+
+function verificarTitular() {
+  if (!currentUser) return;
+  const esTitularA1 = currentUser === "Mauro Hermida" && aptoSel === "a1";
+  const esTitularA2 = currentUser === "Mauricio Iriarte" && aptoSel === "a2";
+  const alertDiv = document.getElementById('titularAlert');
+  if (!alertDiv) return;
+  if (esTitularA1 || esTitularA2) {
+    alertDiv.style.display = 'block';
+    alertDiv.innerHTML = '⚠️ Eres el titular de este apto. No te transfiere a ti mismo — adjunta el <strong>comprobante del pago a Prodesa</strong> como soporte de tu cuota.';
+  } else {
+    alertDiv.style.display = 'none';
+  }
 }
 
 function mostrarCuenta(a) {
@@ -699,6 +858,7 @@ async function submitPago() {
       body: JSON.stringify({
         participante:  currentUser,
         apto:          aptoNombre,
+        apto_key:      aptoSel,          // 'a1' o 'a2' para mapeo en Apps Script
         mes_cuota:     mes,
         tipo_aporte:   tipoActual,
         monto:         monto,
